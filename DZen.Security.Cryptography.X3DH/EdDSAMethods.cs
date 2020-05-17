@@ -16,15 +16,26 @@ namespace DZen.Security.Cryptography.X3DH
 
         public byte[] DomainSeparationBytes => x25519DomainBytes;
 
+        public byte[] Decrypt(byte[] ciphertext, byte[] key, byte[] nonce)
+        {
+            return XSalsa20Poly1305.TryDecrypt(ciphertext, key, nonce);
+        }
+
         public byte[] DeriveKey(byte[] info)
         {
             using Hkdf hkdf = new Hkdf();
             return hkdf.DeriveKey(empty256Salt, hkdf.HashSize == empty256Salt.Length ? empty256Salt : new byte[hkdf.HashSize], DomainSeparationBytes.Concat(info), 32);
         }
 
-        public byte[] KeyExchange(PublicKey publicKey0, PublicKey publicKey1)
+        public (byte[] ciphertext, byte[] nonce) Encrypt(byte[] plaintext, byte[] key, byte[] nonce = default)
         {
-            return Ed25519.KeyExchange(publicKey0.PublicKeyBytes, publicKey1.PublicKeyBytes);
+            nonce ??= PrivateKey.GetSecureRandomeBytes(XSalsa20Poly1305.NonceSizeInBytes);
+            return (XSalsa20Poly1305.Encrypt(plaintext, key, nonce), nonce);
+        }
+
+        public byte[] KeyExchange(PublicKey publicKey, PrivateKey privateKey)
+        {
+            return Ed25519.KeyExchange(publicKey.PublicKeyBytes, privateKey.privateKeyExpanded);
         }
 
         public byte[] Sign(byte[] data, PrivateKey privateKey)

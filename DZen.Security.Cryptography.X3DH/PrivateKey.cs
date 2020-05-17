@@ -26,9 +26,9 @@ namespace DZen.Security.Cryptography.X3DH
             return new PrivateKey(GetSecureRandomeBytes(Ed25519.PrivateKeySeedSizeInBytes));
         }
 
-        protected static byte[] GetSecureRandomeBytes(int size)
+        public static byte[] GetSecureRandomeBytes(int size)
         {
-            byte[] randomeBytes = new byte[Ed25519.PrivateKeySeedSizeInBytes];
+            byte[] randomeBytes = new byte[size];
             using (var rng = RandomNumberGenerator.Create())
                 rng.GetBytes(randomeBytes);
             return randomeBytes;

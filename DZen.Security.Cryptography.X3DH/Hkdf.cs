@@ -7,17 +7,17 @@ namespace DZen.Security.Cryptography.X3DH
     internal class Hkdf : IDisposable
     {
         Func<byte[], byte[], byte[]> keyedHash;
-        HMACSHA256 hmac;
+        HMAC hmac;//originally was HMACSHA256
 
         public int HashSize { get => hmac.HashSize; }
 
         public Hkdf(HMAC hmac = default)
         {
-            hmac ??= new HMACSHA256();
+            this.hmac = hmac ?? new HMACSHA256();
             keyedHash = (key, message) =>
             {
-                hmac.Key = key;
-                return hmac.ComputeHash(message);
+                this.hmac.Key = key;
+                return this.hmac.ComputeHash(message);
             };
         }
 

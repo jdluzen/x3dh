@@ -21,6 +21,8 @@ namespace DZen.Security.Cryptography.X3DH
             privateKeyExpanded = Ed25519.ExpandedPrivateKeyFromSeed(privateKey);
         }
 
+        public PublicKey ToPublicKey() => new PublicKey(PublicKeyBytes);
+
         public static PrivateKey Create()
         {
             return new PrivateKey(GetSecureRandomeBytes(Ed25519.PrivateKeySeedSizeInBytes));

@@ -14,9 +14,11 @@ namespace DZen.Security.Cryptography.X3DH.Tests
             PrivateKey ika = PrivateKey.Create();
             PrivateKey eka = PrivateKey.Create();
 
+            PrivateKey ikb = PrivateKey.Create();
+
             KeyBundle bob = new KeyBundle
             {
-                IdentityKey = PrivateKey.Create(),
+                IdentityKey = ikb.ToPublicKey(),
                 Prekey = SignedKey.Create(),
             };
 
@@ -44,7 +46,7 @@ namespace DZen.Security.Cryptography.X3DH.Tests
             };
 
             dh1 = crypto.KeyExchange(response.Identity, bob.Prekey);
-            dh2 = crypto.KeyExchange(response.EphemeralKey, bob.IdentityKey as PrivateKey);
+            dh2 = crypto.KeyExchange(response.EphemeralKey, ikb);
             dh3 = crypto.KeyExchange(bob.Prekey, eka);
 
             byte[] bobsSk = crypto.DeriveKey(dh1.Concat(dh2, dh3));
